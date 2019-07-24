@@ -45,7 +45,7 @@ def create_l3vpn_instance(task):
 
     id_url = odl_url_l3vpn + vpn_id
 
-    r = requests.put(id_url, data=json.dumps(l3vpn_body), headers=odl_headers, auth=odl_credentials)
+    r = requests.put(id_url, data=json.dumps(l3vpn_body), headers=odl_headers, auth=odl_credentials,verify=False)
     response_code, response_json = parse_response(r)
 
     if response_code == requests.codes.created or response_code == requests.codes.ok:
@@ -67,7 +67,7 @@ def delete_l3vpn_instance(task):
 
     id_url = odl_url_l3vpn + vpn_id
 
-    r = requests.delete(id_url, headers=odl_headers, auth=odl_credentials)
+    r = requests.delete(id_url, headers=odl_headers, auth=odl_credentials,verify=False)
     response_code, response_json = parse_response(r)
 
     if response_code == requests.codes.created or response_code == requests.codes.ok:
@@ -159,7 +159,7 @@ def create_l3vpn_site(task):
 
     id_url = odl_url_l3vpn_site + site_id
 
-    r = requests.put(id_url, data=json.dumps(l3vpn_body), headers=odl_headers, auth=odl_credentials)
+    r = requests.put(id_url, data=json.dumps(l3vpn_body), headers=odl_headers, auth=odl_credentials,verify=False)
     response_code, response_json = parse_response(r)
 
     if response_code == requests.codes.created or response_code == requests.codes.ok:
@@ -181,7 +181,7 @@ def delete_l3vpn_site(task):
 
     id_url = odl_url_l3vpn_site + site_id
 
-    r = requests.dalete(id_url, headers=odl_headers, auth=odl_credentials)
+    r = requests.dalete(id_url, headers=odl_headers, auth=odl_credentials,verify=False)
     response_code, response_json = parse_response(r)
 
     if response_code == requests.codes.created or response_code == requests.codes.ok:
@@ -197,7 +197,7 @@ def delete_l3vpn_site(task):
 
 
 def commit_l3vpn(task):
-    r = requests.post(odl_url_l3vpn_commit, headers=odl_headers, auth=odl_credentials)
+    r = requests.post(odl_url_l3vpn_commit, headers=odl_headers, auth=odl_credentials,verify=False)
     response_code, response_json = parse_response(r)
 
     if response_code == requests.codes.created or response_code == requests.codes.ok:

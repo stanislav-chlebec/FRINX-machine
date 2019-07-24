@@ -37,7 +37,7 @@ def build_lldp(task):
     lldp_body["input"]["concurrent-read-nodes"] = task['inputData']['concurrent-read-nodes']
     lldp_body["input"]["destination-topology"] = task['inputData']['destination-topology']
 
-    r = requests.post(build_lldp_url, data=json.dumps(lldp_body), headers=odl_headers, auth=odl_credentials)
+    r = requests.post(build_lldp_url, data=json.dumps(lldp_body), headers=odl_headers, auth=odl_credentials, verify=False)
     response_code, response_json = parse_response(r)
 
     if response_code == requests.codes.created or response_code == requests.codes.ok:
@@ -64,7 +64,7 @@ def export_lldp(task):
 
     lldp_body = lldp_export_template.copy()
 
-    r = requests.post(export_lldp_url, data=json.dumps(lldp_body), headers=odl_headers, auth=odl_credentials)
+    r = requests.post(export_lldp_url, data=json.dumps(lldp_body), headers=odl_headers, auth=odl_credentials, verify=False)
     response_code, response_json = parse_response(r)
 
     if response_code == requests.codes.created or response_code == requests.codes.ok:
@@ -86,7 +86,7 @@ def read_lldp(task):
 
     id_url = read_lldp_url + topo_id
 
-    r = requests.get(id_url, headers=odl_headers, auth=odl_credentials)
+    r = requests.get(id_url, headers=odl_headers, auth=odl_credentials, verify=False)
     response_code, response_json = parse_response(r)
 
     if response_code == requests.codes.created or response_code == requests.codes.ok:

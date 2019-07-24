@@ -6,6 +6,8 @@ services:
     build:
       context: ./odl
       dockerfile: Dockerfile
+      args:
+        - STORE_PASS=example_password
     image: frinx/fm-odl
     logging:
         driver: "json-file"
@@ -13,13 +15,13 @@ services:
             max-file: "3"
             max-size: "10m"
     container_name: odl
-    tty: true
+
     volumes:
        - odl_logs:/opt/distribution-frinx/data/log
        - odl_pass:/opt/distribution-frinx/bin/db-credentials
        - odl_data:/opt/distribution-frinx/data
     ports:
-      - 8181:8181
+      - 8443:8443
 
   frinxit:
     build:

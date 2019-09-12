@@ -6,8 +6,6 @@ services:
     build:
       context: ./odl
       dockerfile: Dockerfile
-      args:
-        - STORE_PASS=example_password
     image: frinx/fm-odl
     logging:
         driver: "json-file"
@@ -15,29 +13,14 @@ services:
             max-file: "3"
             max-size: "10m"
     container_name: odl
-
+    environment:
+      - JAVA_MAX_MEM=4G
     volumes:
-       - odl_logs:/opt/distribution-frinx/data/log
-       - odl_pass:/opt/distribution-frinx/bin/db-credentials
+       - odl_logs:/opt/distribution-frinx/log
+       - odl_pass:/opt/distribution-frinx/db-credentials
        - odl_data:/opt/distribution-frinx/data
     ports:
-      - 8443:8443
-
-  frinxit:
-    build:
-      context: ./frinxit
-      dockerfile: Dockerfile
-    image: frinx/fm-frinxit
-    logging:
-        driver: "json-file"
-        options:
-            max-file: "3"
-            max-size: "10m"
-    container_name: frinxit
-    environment:
-      - odl_target=odl
-    ports:
-      - 8888:8888
+      - 8181:8181
 
   micros:
     build:
@@ -50,8 +33,6 @@ services:
             max-file: "3"
             max-size: "10m"
     container_name: micros
-    ports:
-      - 6000:6000
     depends_on:
       - odl
       - conductor-server
@@ -92,29 +73,9 @@ services:
     ports:
       - 8080:8080
       - 8000:8000
-    restart: on-failure
     depends_on:
       - dynomite
     command: ["/app/wait_for.sh", "-t", "120",  "elasticsearch:9300", "--", "/app/startup.sh"]
-
-  conductor-ui:
-    build:
-      context: ./conductor/
-      dockerfile: docker/ui/Dockerfile
-    environment:
-      - WF_SERVER=http://conductor-server:8080/api/
-    image: frinx/fm-conductor-ui
-    container_name: conductor-ui
-    links:
-      - conductor-server
-    logging:
-        driver: "json-file"
-        options:
-            max-file: "3"
-            max-size: "10m"
-    ports:
-      - 5000:5000
-
 
   dynomite:
     logging:
@@ -146,6 +107,7 @@ services:
       - 9300:9300
     environment:
       - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m"
     volumes:
        - elastic_data:/usr/share/elasticsearch/data
     healthcheck:
@@ -193,6 +155,7 @@ services:
      args:
        - ODL=odl:8181
        - WF_SERVER=conductor-server:8080
+       - REACT_APP_LOGIN_ENABLED=false
    image: frinx/fm-uniconfig-ui
    container_name: uniconfig-ui
    logging:

@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import copy
 import json
 from string import Template
 
@@ -8,6 +9,7 @@ import requests
 from frinx_rest import odl_url_base, odl_headers, odl_credentials, parse_response
 
 odl_url_netconf_mount = odl_url_base + "/config/network-topology:network-topology/topology/topology-netconf/node/"
+odl_url_netconf_mount_oper = odl_url_base + "/operational/network-topology:network-topology/topology/topology-netconf/node/"
 
 mount_template = {
     "node": 
@@ -28,7 +30,7 @@ mount_template = {
 def execute_mount_netconf(task):
     device_id = task['inputData']['id']
 
-    mount_body = mount_template.copy()
+    mount_body = copy.deepcopy(mount_template)
 
     mount_body["node"]["node-id"] = task['inputData']['id']
     mount_body["node"]["netconf-node-topology:host"] = task['inputData']['host']
@@ -100,7 +102,7 @@ def execute_check_connected_netconf(task):
     r = requests.get(id_url, headers=odl_headers, auth=odl_credentials, verify=False)
     response_code, response_json = parse_response(r)
 
-    if response_code == requests.codes.ok and response_json["node"][0]["cli-topology:connection-status"] == "connected":
+    if response_code == requests.codes.ok and response_json["node"][0]["netconf-node-topology:connection-status"] == "connected":
         return {'status': 'COMPLETED', 'output': {'url': id_url,
                                                   'response_code': response_code,
                                                   'response_body': response_json},
